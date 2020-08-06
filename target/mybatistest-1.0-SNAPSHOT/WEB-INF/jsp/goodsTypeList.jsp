@@ -9,14 +9,15 @@
     <title>欢迎页面-X-admin2.2</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/font.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/xadmin.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.min.css">
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-3.5.0.min.js"></script>
     <script src="${pageContext.request.contextPath}/static/lib/layui/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/xadmin.js"></script>
-    <script src="${pageContext.request.contextPath}/static/js/bootstrap.min.js"></script>
 </head>
+
 <body onload="load(1)">
 <div class="x-nav">
             <span class="layui-breadcrumb">
@@ -35,50 +36,46 @@
             <div class="layui-card">
                 <div class="layui-card-body ">
                     <div class="layui-input-inline layui-show-xs-block">
-                        <input type="text" class="layui-input" placeholder="生厂商名称" id="producerName"/></div>
+                        <input  type="text" class="layui-input" placeholder="商品类型名称" id="startName"/></div>
                     <div class="layui-input-inline layui-show-xs-block">
-                        <button class="layui-btn" onclick="load(nowPage)" lay-filter="sreach">
+                        <button class="layui-btn layui-btn-warm" onclick="load(nowPage)" lay-filter="sreach">
                             <i class="layui-icon">&#xe615;</i></button>
-                        <button class="layui-btn" onclick="xadmin.open('添加合作生产商','${pageContext.request.contextPath}/gc/insertProPage.ajax',800,600)">
+                        <button class="layui-btn" onclick="xadmin.open('添加商品类型','${pageContext.request.contextPath}/gc/insertTypePage.ajax',800,600)">
                             <i class="layui-icon"></i>添加</button>
                     </div>
 
                 </div>
-
-                <div class="layui-card-body ">
                     <table class="layui-table layui-form">
                         <thead>
                         <tr>
-                            <th>生产商编号</th>
-                            <th>生厂商名称</th>
-                            <th>生产商地址</th>
-                            <th>联系方式</th>
+                            <th>商品类型编号</th>
+                            <th>商品类型名称</th>
                             <th>状态</th>
                             <th>操作</th></tr>
                         </thead>
-                        <form>
-                            <tbody id="html">
-                            </tbody>
-                        </form>
+                        <tbody>
+
+                        </tbody>
                     </table>
                 </div>
                 <div class="layui-card-body ">
                     <div class="page">
+                        <div>
+                            <%--分页按钮--%>
+                            <div class="col offset-3">
 
-                        <%--分页按钮--%>
-                        <div class="col offset-3">
-                            <button type="button" class="layui-btn" onclick="indexPage()">首页</button>
-                            <button type="button" class="layui-btn layui-btn-normal" onclick="prePage()"> <i class="layui-icon">&#xe65a;</i></button>
-                            <div style="display: inline-block" id="pageNow"></div>
-                            <button type="button" class="layui-btn layui-btn-normal" class="num" onclick="nextPage()"> <i class="layui-icon">&#xe65b;</i></button>
-                            <buttonb type="button" class="layui-btn" onclick="endPage()">尾页</buttonb>
+                                <button type="button" class="layui-btn" onclick="indexPage()">首页</button>
+                                <button type="button" class="layui-btn layui-btn-normal" onclick="prePage()"> <i class="layui-icon">&#xe65a;</i></button>
+                                <div style="display: inline-block" id="pageNow"></div>
+                                <button type="button" class="layui-btn layui-btn-normal" class="num" onclick="nextPage()"> <i class="layui-icon">&#xe65b;</i></button>
+                                <buttonb type="button" class="layui-btn" onclick="endPage()">尾页</buttonb>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 </body>
 <script>
@@ -99,14 +96,13 @@
     layui.use(['form'], function(){
         form = layui.form;
     });
-    /*定义分页信息*/
+
     var nPage;
     var pPage;
     var iPage;
     var ePage;
     var nowPage;
     var size;
-    /*执行分页方法*/
     function prePage() {
         load(pPage);
     }
@@ -119,16 +115,15 @@
     function endPage() {
         load(ePage);
     }
-    /*页面加载*/
+    var json1;
     function load(p) {
-        var name=$("#producerName").val();
+        var name=$("#startName").val();
         var params={
             "name":name,
             "page":p
         }
-        /*获取页面信息的ajax请求*/
         $.ajax({
-            url:"${pageContext.request.contextPath}/gc/producerList.ajax",
+            url:"${pageContext.request.contextPath}/gc/goodsTypeList.ajax",
             data:params,
             type:"get",
             dataType:"json",
@@ -139,28 +134,28 @@
                 ePage=info.endPage;
                 nowPage=info.nowPage;
                 size=info.size;
+                var t="";
+                var t1="";
                 var html="";
-                for (var i = 0; i < info.producerList.length; i++) {
-                    if (info.producerList[i].state==0){
-                        t="<input id='switch' type='checkbox' name='switch' lay-text='合作|未合作' checked='' lay-skin='switch'>";
-                        t1="合作";
-                    }else if (info.producerList[i].state==1){
-                        t="<input id='switch' type='checkbox' name='switch' lay-text='合作|未合作' lay-skin='switch'>";
-                        t1="未合作";
+                for (var i = 0; i < info.goodsTypeList.length; i++) {
+                    if (info.goodsTypeList[i].state==0){
+                        t="<input id='switch' type='checkbox' value='已入库'  name='switch' lay-text='启用|禁用' checked='' lay-skin='switch'>";
+                        t1="已启用";
+                    }else if (info.goodsTypeList[i].state==1){
+                        t="<input id='switch' type='checkbox' value='已出库' name='switch' lay-text='启用|禁用' lay-skin='switch'>";
+                        t1="已禁用";
                     }
                     html+="<tr>"+
-                        "<td>"+info.producerList[i].producerId+"</td>"+
-                        "<td>"+info.producerList[i].name+"</td>"+
-                        "<td>"+info.producerList[i].address+"</td>"+
-                        "<td>"+info.producerList[i].tel+"</td>"+
+                        "<td>"+info.goodsTypeList[i].typeId+"</td>"+
+                        "<td>"+info.goodsTypeList[i].name+"</td>"+
+                        "<td hidden>"+info.goodsTypeList[i].state+"</td>"+
                         "<td><a href='javascript:;' title='"+t1+"' onclick='sw(this)'>"+t+"</a></td>"+
                         "<td><button class='layui-btn layui-btn-xs layui-btn-radius layui-btn-normal' onclick='selectPage(this)'><i class='layui-icon'>&#xe63c;</i></button>"+
                         "<button class='layui-btn layui-btn-xs layui-btn-radius layui-btn-danger' onclick='member_del(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
                         "</tr>"
                 }
-                $("#html").html(html);
+                $("tbody").html(html);
                 form.render();
-                var pageNow="";
                 var pageNow="";
                 for (var i = 1; i <=ePage ; i++) {
                     if (nowPage==i){
@@ -171,43 +166,23 @@
 
                 }
                 $("#pageNow").html(pageNow);
+
             }
         })
     }
-    /*定义一个json对象*/
-    var json;
-    /*获取页面信息并且打开编辑窗口*/
-    function selectPage(o){
-        var producerId=$(o).parent().parent().find("td").eq(0).text();
-        var name=$(o).parent().parent().find("td").eq(1).text();
-        var address=$(o).parent().parent().find("td").eq(2).text();
-        var tel=$(o).parent().parent().find("td").eq(3).text();
-/*        var state=$(o).parent().parent().find("td").eq(4).text();*/
-        var data = {
-            "producerId":producerId,
-            "name":name,
-            "address":address,
-            "tel":tel,
-         /*   "state":state*/
-            "nowPage":nowPage
-        }
-        json=JSON.stringify(data);
-        xadmin.open('编辑','${pageContext.request.contextPath}/gc/selectProPage.ajax');
-    }
-    /*修改状态*/
     function sw(obj) {
-        var producerId=$(obj).parent().parent().find("td").eq(0).text();
-        layer.confirm('确认要修改合作关系吗？',{btn:['确认','取消'],btn1:
+        var typeId=$(obj).parent().parent().find("td").eq(0).text();
+        layer.confirm('确认要修改商品类型的状态吗？',{btn:['确认','取消'],btn1:
                 function(index) {
-                    if($(obj).attr('title') == '未合作'){
+                    if($(obj).attr('title') == '已启用'){
                         $.ajax({
-                            url:"${pageContext.request.contextPath}/gc/updateProSwitch.ajax",
-                            data:{"producerId":producerId,"state":0},
+                            url:"${pageContext.request.contextPath}/gc/updateTypeSwitch.ajax",
+                            data:{"typeId":typeId,"state":1},
                             type:"get",
                             dataType:"json",
                             success:function (info) {
                                 if(info>0){
-                                    layer.msg('已合作!', {
+                                    layer.msg('已禁用!', {
                                         icon: 6,
                                         time: 1000
                                     });
@@ -219,13 +194,13 @@
                     }
                     else {
                         $.ajax({
-                            url:"${pageContext.request.contextPath}/gc/updateProSwitch.ajax",
-                            data:{"producerId":producerId,"state":1},
+                            url:"${pageContext.request.contextPath}/gc/updateTypeSwitch.ajax",
+                            data:{"typeId":typeId,"state":0},
                             type:"get",
                             dataType:"json",
                             success:function (info) {
                                 if(info>0){
-                                    layer.msg('已取消合作!', {
+                                    layer.msg('已启用!', {
                                         icon: 6,
                                         time: 1000
                                     });
@@ -240,18 +215,64 @@
                 load(nowPage);
             }})
     }
-    /*删除商品信息的方法*/
+    var json;
+    function selectPage(o){
+        var typeId=$(o).parent().parent().find("td").eq(0).text();
+        var name=$(o).parent().parent().find("td").eq(1).text();
+        var state=$(o).parent().parent().find("td").eq(2).text();
+        var data = {
+            "typeId":typeId,
+            "name":name,
+            "state":state,
+            "nowPage":nowPage
+        }
+        json=JSON.stringify(data);
+        xadmin.open('查看','${pageContext.request.contextPath}/gc/selectTypePage.ajax');
+    }
+    /*用户-停用*/
+    function member_stop(obj, id) {
+        layer.confirm('确认要停用吗？',
+            function(index) {
+
+                if ($(obj).attr('title') == '启用') {
+
+                    //发异步把用户状态进行更改
+                    $(obj).attr('title', '停用');
+                    $(obj).find('i').html('&#xe62f;');
+
+                    $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
+                    layer.msg('已停用!', {
+                        icon: 5,
+                        time: 1000
+                    });
+
+                } else {
+                    $(obj).attr('title', '启用');
+                    $(obj).find('i').html('&#xe601;');
+
+                    $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
+                    layer.msg('已启用!', {
+                        icon: 5,
+                        time: 1000
+                    });
+                }
+
+            });
+    }
+
+    /*用户-删除*/
+
     function member_del(o) {
-        var producerId=$(o).parent().parent().find("td").eq(0).text();
-        var state=$(o).parent().parent().find("td").eq(4).text();
+        var typeId=$(o).parent().parent().find("td").eq(0).text();
+        var state=$(o).parent().parent().find("td").eq(3).text();
         layer.confirm('确认要删除吗？',
             function(index) {
                 //发异步删除数据
-                if(state == '未合作'){
+                if(state == '禁用'){
                     $.ajax({
-                        url:"${pageContext.request.contextPath}/gc/deletePro.ajax",
+                        url:"${pageContext.request.contextPath}/gc/deleteType.ajax",
                         type:"get",
-                        data:{"producerId":producerId},
+                        data:{"typeId":typeId},
                         dataType: "json",
                         success:function(info){
                             if(info>0){
@@ -277,7 +298,7 @@
                     })
 
                 }else {
-                    layer.msg('与该公司还有合作关系，不能删除!', {
+                    layer.msg('该商品类型正在启用中，不能删除!', {
                         icon: 2,
                         time: 1000
                     });
@@ -287,3 +308,4 @@
 </script>
 
 </html>
+

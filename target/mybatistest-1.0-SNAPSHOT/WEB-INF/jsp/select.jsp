@@ -122,11 +122,13 @@
             data:$("form").serialize(),
             contentType:"charset=UTF-8",
             success:function (info) {
-                    // 获得frame索引
-                    var index = parent.layer.getFrameIndex(window.name);
-                    //关闭当前frame
-                    parent.location.reload();
-                    parent.layer.close(index);
+               /* layer.close(layer.index);
+                window.parent.location.reload();*/
+                var index=parent.layer.getFrameIndex(window.name); //获取当前窗口的name
+                /*window.parent.location.reload();*/
+                window.parent.load(data.nowPage);
+                parent.layer.close(index);		//关闭窗口
+
             },
             error:function () {
                 alert("失败222") ;

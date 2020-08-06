@@ -28,25 +28,13 @@
   <insert id="insertSelective" parameterType="com.hqyj.pojo.Goods_type" >
     insert into goods_type
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="typeId != null" >
-        type_id,
-      </if>
-      <if test="name != null" >
+      <if test="name != null and name!=''" >
         name,
-      </if>
-      <if test="state != null" >
-        state,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="typeId != null" >
-        #{typeId,jdbcType=INTEGER},
-      </if>
-      <if test="name != null" >
+      <if test="name != null and name!=''" >
         #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="state != null" >
-        #{state,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -73,10 +61,24 @@
     <include refid="Base_Column_List" />
     from goods_type
     <trim prefix=" where" suffix=" ">
-      <if test="typeId!='' and typeId!=null">
-        type_id=#{typeId,jdbcType=VARCHAR}
+      <if test="name!='' and name!=null">
+        name=#{name,jdbcType=VARCHAR}
       </if>
     </trim>
 
   </select>
+  <update id="updateTypeState" parameterType="com.hqyj.pojo.Goods_type" >
+  update goods_type
+  set state = #{state,jdbcType=INTEGER}
+  where type_id = #{typeId,jdbcType=INTEGER}
+  </update>
+  <update id="updateTypeSave" parameterType="com.hqyj.pojo.Goods_type" >
+    update goods_type
+    <set >
+      <if test="name != null and name != ''" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where type_id = #{typeId,jdbcType=INTEGER}
+  </update>
 </mapper>

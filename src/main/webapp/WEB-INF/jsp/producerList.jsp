@@ -39,26 +39,20 @@
                     <div class="layui-input-inline layui-show-xs-block">
                         <button class="layui-btn" onclick="load(nowPage)" lay-filter="sreach">
                             <i class="layui-icon">&#xe615;</i></button>
+                        <button class="layui-btn" onclick="xadmin.open('添加合作生产商','${pageContext.request.contextPath}/gc/insertProPage.ajax',800,600)">
+                            <i class="layui-icon"></i>添加</button>
                     </div>
 
                 </div>
 
-                <div class="layui-card-header">
-                    <button class="layui-btn layui-btn-danger" onclick="delAll()">
-                        <i class="layui-icon"></i>批量删除</button>
-                    <button class="layui-btn" onclick="xadmin.open('添加用户','./order-add.html',800,600)">
-                        <i class="layui-icon"></i>添加</button></div>
                 <div class="layui-card-body ">
-                    <table class="layui-table">
+                    <table class="layui-table layui-form">
                         <thead>
                         <tr>
-                            <th>
-                                <input type="checkbox" name="">
-                            </th>
                             <th>生产商编号</th>
                             <th>生厂商名称</th>
                             <th>生产商地址</th>
-                            <th>生产商联系方式</th>
+                            <th>联系方式</th>
                             <th>状态</th>
                             <th>操作</th></tr>
                         </thead>
@@ -73,11 +67,11 @@
 
                         <%--分页按钮--%>
                         <div class="col offset-3">
-                            <a href="#" class="num" onclick="indexPage()">首页</a>
-                            <a href="#" class="num" onclick="prePage()">上一页</a>
+                            <button type="button" class="layui-btn" onclick="indexPage()">首页</button>
+                            <button type="button" class="layui-btn layui-btn-normal" onclick="prePage()"> <i class="layui-icon">&#xe65a;</i></button>
                             <div style="display: inline-block" id="pageNow"></div>
-                            <a href="#" class="num" onclick="nextPage()">下一页</a>
-                            <a href="#" class="num" onclick="endPage()">尾页</a>
+                            <button type="button" class="layui-btn layui-btn-normal" class="num" onclick="nextPage()"> <i class="layui-icon">&#xe65b;</i></button>
+                            <buttonb type="button" class="layui-btn" onclick="endPage()">尾页</buttonb>
                         </div>
                     </div>
                 </div>
@@ -88,11 +82,31 @@
 </div>
 </body>
 <script>
+    layui.use(['laydate', 'form'],
+        function() {
+            var laydate = layui.laydate;
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#start' //指定元素
+            });
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#end' //指定元素
+            });
+        });
+    layui.use(['form'], function(){
+        form = layui.form;
+    });
+    /*定义分页信息*/
     var nPage;
     var pPage;
     var iPage;
     var ePage;
     var nowPage;
+    var size;
+    /*执行分页方法*/
     function prePage() {
         load(pPage);
     }
@@ -105,12 +119,14 @@
     function endPage() {
         load(ePage);
     }
+    /*页面加载*/
     function load(p) {
         var name=$("#producerName").val();
         var params={
             "name":name,
             "page":p
         }
+        /*获取页面信息的ajax请求*/
         $.ajax({
             url:"${pageContext.request.contextPath}/gc/producerList.ajax",
             data:params,
@@ -122,54 +138,151 @@
                 iPage=info.indexPage;
                 ePage=info.endPage;
                 nowPage=info.nowPage;
+                size=info.size;
                 var html="";
                 for (var i = 0; i < info.producerList.length; i++) {
+                    if (info.producerList[i].state==0){
+                        t="<input id='switch' type='checkbox' name='switch' lay-text='合作|未合作' checked='' lay-skin='switch'>";
+                        t1="合作";
+                    }else if (info.producerList[i].state==1){
+                        t="<input id='switch' type='checkbox' name='switch' lay-text='合作|未合作' lay-skin='switch'>";
+                        t1="未合作";
+                    }
                     html+="<tr>"+
-                        "<td><input type='checkbox'/></td>"+
                         "<td>"+info.producerList[i].producerId+"</td>"+
                         "<td>"+info.producerList[i].name+"</td>"+
                         "<td>"+info.producerList[i].address+"</td>"+
                         "<td>"+info.producerList[i].tel+"</td>"+
-                        "<td>"+info.producerList[i].state+"</td>"+
-                        "<td><button onclick='selectPage(this)'><i class='layui-icon'>&#xe63c;</i></button>"+
-                        "<button><i class='layui-icon'>&#xe640;</i></button></td>"+
+                        "<td><a href='javascript:;' title='"+t1+"' onclick='sw(this)'>"+t+"</a></td>"+
+                        "<td><button class='layui-btn layui-btn-xs layui-btn-radius layui-btn-normal' onclick='selectPage(this)'><i class='layui-icon'>&#xe63c;</i></button>"+
+                        "<button class='layui-btn layui-btn-xs layui-btn-radius layui-btn-danger' onclick='member_del(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
                         "</tr>"
                 }
                 $("#html").html(html);
+                form.render();
+                var pageNow="";
                 var pageNow="";
                 for (var i = 1; i <=ePage ; i++) {
-                    pageNow+="&nbsp;<a href='#' onclick='load("+i+")' class='num'>" + i + "</a>"
+                    if (nowPage==i){
+                        pageNow+="<button onclick='load("+i+")' class='layui-btn layui-btn-sm layui-btn-danger' >" + i + "</button>"
+                    }else {
+                        pageNow+="<button onclick='load("+i+")' class='layui-btn layui-btn-sm layui-btn-warm' >" + i + "</button>"
+                    }
+
                 }
                 $("#pageNow").html(pageNow);
             }
         })
     }
+    /*定义一个json对象*/
     var json;
+    /*获取页面信息并且打开编辑窗口*/
     function selectPage(o){
-        var goodsId=$(o).parent().parent().find("td").eq(1).text();
-        var name=$(o).parent().parent().find("td").eq(2).text();
-        var typeId=$(o).parent().parent().find("td").eq(3).text();
-        var producerId=$(o).parent().parent().find("td").eq(4).text();
-        var cost=$(o).parent().parent().find("td").eq(5).text();
-        var storeId=$(o).parent().parent().find("td").eq(6).text();
-        var produceDate=$(o).parent().parent().find("td").eq(7).text();
-        var expireDate=$(o).parent().parent().find("td").eq(8).text();
-        var gNum=$(o).parent().parent().find("td").eq(9).text();
-        var state=$(o).parent().parent().find("td").eq(10).text();
+        var producerId=$(o).parent().parent().find("td").eq(0).text();
+        var name=$(o).parent().parent().find("td").eq(1).text();
+        var address=$(o).parent().parent().find("td").eq(2).text();
+        var tel=$(o).parent().parent().find("td").eq(3).text();
+/*        var state=$(o).parent().parent().find("td").eq(4).text();*/
         var data = {
-            "goodsId":goodsId,
-            "name":name,
-            "typeId":typeId,
             "producerId":producerId,
-            "cost":cost,
-            "storeId":storeId,
-            "produceDate":produceDate,
-            "expireDate":expireDate,
-            "gNum":gNum,
-            "state":state
+            "name":name,
+            "address":address,
+            "tel":tel,
+         /*   "state":state*/
+            "nowPage":nowPage
         }
         json=JSON.stringify(data);
-        xadmin.open('查看','${pageContext.request.contextPath}/gc/selectPage.ajax');
+        xadmin.open('编辑','${pageContext.request.contextPath}/gc/selectProPage.ajax');
+    }
+    /*修改状态*/
+    function sw(obj) {
+        var producerId=$(obj).parent().parent().find("td").eq(0).text();
+        layer.confirm('确认要修改合作关系吗？',{btn:['确认','取消'],btn1:
+                function(index) {
+                    if($(obj).attr('title') == '未合作'){
+                        $.ajax({
+                            url:"${pageContext.request.contextPath}/gc/updateProSwitch.ajax",
+                            data:{"producerId":producerId,"state":0},
+                            type:"get",
+                            dataType:"json",
+                            success:function (info) {
+                                if(info>0){
+                                    layer.msg('已合作!', {
+                                        icon: 6,
+                                        time: 1000
+                                    });
+                                    load(nowPage);
+                                }
+
+                            }
+                        })
+                    }
+                    else {
+                        $.ajax({
+                            url:"${pageContext.request.contextPath}/gc/updateProSwitch.ajax",
+                            data:{"producerId":producerId,"state":1},
+                            type:"get",
+                            dataType:"json",
+                            success:function (info) {
+                                if(info>0){
+                                    layer.msg('已取消合作!', {
+                                        icon: 6,
+                                        time: 1000
+                                    });
+                                    load(nowPage);
+                                }
+                            }
+                        })
+
+                    }
+                },
+            btn2:function (index) {
+                load(nowPage);
+            }})
+    }
+    /*删除商品信息的方法*/
+    function member_del(o) {
+        var producerId=$(o).parent().parent().find("td").eq(0).text();
+        var state=$(o).parent().parent().find("td").eq(4).text();
+        layer.confirm('确认要删除吗？',
+            function(index) {
+                //发异步删除数据
+                if(state == '未合作'){
+                    $.ajax({
+                        url:"${pageContext.request.contextPath}/gc/deletePro.ajax",
+                        type:"get",
+                        data:{"producerId":producerId},
+                        dataType: "json",
+                        success:function(info){
+                            if(info>0){
+                                layer.msg('已删除!', {
+                                    icon: 1,
+                                    time: 1000
+                                });
+                                if(size==1){
+                                    load(iPage);
+                                }else {
+                                    load(nowPage);
+                                }
+
+                            }else {
+                                layer.msg('删除失败!', {
+                                    icon: 2,
+                                    time: 1000
+                                });
+                            }
+
+                        }
+
+                    })
+
+                }else {
+                    layer.msg('与该公司还有合作关系，不能删除!', {
+                        icon: 2,
+                        time: 1000
+                    });
+                }
+            });
     }
 </script>
 

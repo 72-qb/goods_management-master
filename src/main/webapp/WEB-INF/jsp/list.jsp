@@ -44,14 +44,18 @@
                         <div class="layui-input-inline layui-show-xs-block">
                             <button class="layui-btn layui-btn-warm" onclick="load(nowPage)" lay-filter="sreach">
                                 <i class="layui-icon">&#xe615;</i></button>
+                            <button class="layui-btn" name="state"  onclick="findStorage()" lay-filter="sreach">
+                                <i class="layui-icon">&#xe615;</i>查看已入库商品</button>
+                            <button class="layui-btn" name="state"  onclick="findStorage1()" lay-filter="sreach">
+                                <i class="layui-icon">&#xe615;</i>查看已出库商品</button>
                         </div>
-                        <%--      <div style="float: right" class="layui-input-inline layui-show-xs-block">
-                                  <input type="text" name="username" placeholder="请输入商品编号" autocomplete="off" class="layui-input"></div>
-                              <div style="float: right" class="layui-input-inline layui-show-xs-block">
-                                  <button class="layui-btn" lay-filter="sreach">
-                                      <i class="layui-icon">&#xe615;</i></button>
-                              </div>--%>
+
                 </div>
+           <%--     <div style="float: right" class="layui-input-inline layui-show-xs-block">
+                <input type="text" name="username" placeholder="请输入商品编号" autocomplete="off" class="layui-input"></div>
+                <div style="float: right" class="layui-input-inline layui-show-xs-block">
+
+                </div>--%>
              <%--   <div class="layui-card-header">
                     <button class="layui-btn layui-btn-danger" onclick="delAll()">
                         <i class="layui-icon"></i>批量删除</button>
@@ -61,9 +65,9 @@
                     <table class="layui-table layui-form">
                         <thead>
                         <tr>
-                            <th>
+                          <%--  <th>
                                 <input type="checkbox" name="" lay-skin="primary">
-                            </th>
+                            </th>--%>
                             <th>商品编号</th>
                             <th>商品名称</th>
                             <th>商品类型</th>
@@ -143,10 +147,12 @@
         var name=$("#startName").val();
         var typeId=$("#startType").val();
         var goodsId=$("#startId").val();
+        var state=$("button[name='state']").val();
         var params={
             "name":name,
             "typeId":typeId,
             "goodsId":goodsId,
+            "state":state,
             "page":p
         }
         $.ajax({
@@ -179,14 +185,14 @@
                 var html="";
                 for (var i = 0; i < info.goodsList.length; i++) {
                     if (info.goodsList[i].state==0){
-                    t="<input id='switch' type='checkbox'  name='switch' lay-text='已入库|已出库' checked='' lay-skin='switch'>";
+                    t="<input id='switch' type='checkbox' value='已入库'  name='switch' lay-text='已入库|已出库' checked='' lay-skin='switch'>";
                     t1="已入库";
                     }else if (info.goodsList[i].state==1){
-                    t="<input id='switch' type='checkbox'  name='switch' lay-text='已入库|已出库' lay-skin='switch'>";
+                    t="<input id='switch' type='checkbox' value='已出库' name='switch' lay-text='已入库|已出库' lay-skin='switch'>";
                     t1="已出库";
                     }
                     html+="<tr>"+
-                        "<td><input type='checkbox' name='' lay-skin='primary' ></td>"+
+                        /*"<td><input type='checkbox' name='' lay-skin='primary' ></td>"+*/
                         "<td>"+info.goodsList[i].goodsId+"</td>"+
                         "<td>"+info.goodsList[i].name+"</td>"+
                         "<td hidden>"+info.goodsList[i].typeId+"</td>"+
@@ -199,8 +205,8 @@
                         "<td>"+info.goodsList[i].expireDate+"</td>"+
                         "<td>"+info.goodsList[i].gNum+"</td>"+
                         "<td><a href='javascript:;' title='"+t1+"' onclick='sw(this)'>"+t+"</a></td>"+
-                        "<td><button class='layui-btn layui-btn-radius layui-btn-normal' onclick='selectPage(this)'><i class='layui-icon'>&#xe63c;</i>编辑</button>"+
-                        "<button class='layui-btn layui-btn-radius layui-btn-danger' onclick='member_del(this)'><i class='layui-icon'>&#xe640;</i>删除</button></td>"+
+                        "<td><button class='layui-btn layui-btn-xs layui-btn-radius layui-btn-normal' onclick='selectPage(this)'><i class='layui-icon'>&#xe63c;</i></button>"+
+                        "<button class='layui-btn layui-btn-xs layui-btn-radius layui-btn-danger' onclick='member_del(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
                         "</tr>"
                 }
                 $("tbody").html(html);
@@ -219,8 +225,16 @@
             }
         })
     }
+   function findStorage() {
+        $("button[name='state']").val(0);
+        load(iPage);
+    }
+    function findStorage1() {
+        $("button[name='state']").val(1);
+        load(iPage);
+    }
     function sw(obj) {
-        var goodsId=$(obj).parent().parent().find("td").eq(1).text();
+        var goodsId=$(obj).parent().parent().find("td").eq(0).text();
         layer.confirm('确认要修改库存状态吗？',{btn:['确认','取消'],btn1:
             function(index) {
         if($(obj).attr('title') == '已入库'){
@@ -266,16 +280,16 @@
     }
     var json;
     function selectPage(o){
-        var goodsId=$(o).parent().parent().find("td").eq(1).text();
-        var name=$(o).parent().parent().find("td").eq(2).text();
-        var typeId=$(o).parent().parent().find("td").eq(3).text();
-        var producerId=$(o).parent().parent().find("td").eq(5).text();
-        var cost=$(o).parent().parent().find("td").eq(7).text();
-        var storeId=$(o).parent().parent().find("td").eq(8).text();
-        var produceDate=$(o).parent().parent().find("td").eq(9).text();
-        var expireDate=$(o).parent().parent().find("td").eq(10).text();
-        var gNum=$(o).parent().parent().find("td").eq(11).text();
-        var state=$(o).parent().parent().find("td").eq(12).text();
+        var goodsId=$(o).parent().parent().find("td").eq(0).text();
+        var name=$(o).parent().parent().find("td").eq(1).text();
+        var typeId=$(o).parent().parent().find("td").eq(2).text();
+        var producerId=$(o).parent().parent().find("td").eq(4).text();
+        var cost=$(o).parent().parent().find("td").eq(6).text();
+        var storeId=$(o).parent().parent().find("td").eq(7).text();
+        var produceDate=$(o).parent().parent().find("td").eq(8).text();
+        var expireDate=$(o).parent().parent().find("td").eq(9).text();
+        var gNum=$(o).parent().parent().find("td").eq(10).text();
+        var state=$(o).parent().parent().find("td").eq(11).text();
         var data = {
             "goodsId":goodsId,
             "name":name,
@@ -286,7 +300,8 @@
             "produceDate":produceDate,
             "expireDate":expireDate,
             "gNum":gNum,
-            "state":state
+            "state":state,
+            "nowPage":nowPage
         }
         json=JSON.stringify(data);
         xadmin.open('查看','${pageContext.request.contextPath}/gc/selectPage.ajax');
@@ -325,55 +340,49 @@
     /*用户-删除*/
 
     function member_del(o) {
-        var goodsId=$(o).parent().parent().find("td").eq(1).text();
-        layer.confirm('确认要删除吗？',
-            function(index) {
-                //发异步删除数据
-                $.ajax({
-                    url:"${pageContext.request.contextPath}/gc/delete.ajax",
-                    type:"get",
-                    data:{"goodsId":goodsId},
-                    dataType: "json",
-                    success:function(info){
-                        if(info>0){
-                            layer.msg('已删除!', {
-                                icon: 1,
-                                time: 1000
-                            });
-                            if(size==1){
-                                load(ePage-1);
+        var goodsId=$(o).parent().parent().find("td").eq(0).text();
+        var state=$(o).parent().parent().find("td").eq(11).text();
+            layer.confirm('确认要删除吗？',
+                function(index) {
+                    //发异步删除数据
+                    if(state == '已出库'){
+                    $.ajax({
+                        url:"${pageContext.request.contextPath}/gc/delete.ajax",
+                        type:"get",
+                        data:{"goodsId":goodsId},
+                        dataType: "json",
+                        success:function(info){
+                            if(info>0){
+                                layer.msg('已删除!', {
+                                    icon: 1,
+                                    time: 1000
+                                });
+                                if(size==1){
+                                    load(iPage);
+                                }else {
+                                    load(nowPage);
+                                }
+
                             }else {
-                                load(ePage);
+                                layer.msg('删除失败!', {
+                                    icon: 2,
+                                    time: 1000
+                                });
                             }
 
-                        }else {
-                            layer.msg('删除失败!', {
-                                icon: 2,
-                                time: 1000
-                            });
                         }
 
-                    }
+                    })
 
-
-                })
-
+                   }else {
+                             layer.msg('该商品还在库存中，不能删除!', {
+                                 icon: 2,
+                              time: 1000
             });
+        }
+    });
     }
-
-    function delAll(argument) {
-
-        var data = tableCheck.getData();
-
-        layer.confirm('确认要删除吗？' + data,
-            function(index) {
-                //捉到所有被选中的，发异步进行删除
-                layer.msg('删除成功', {
-                    icon: 1
-                });
-                $(".layui-form-checked").not('.header').parents('tr').remove();
-            });
-    }</script>
+</script>
 
 </html>
 

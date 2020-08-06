@@ -177,8 +177,10 @@
       <if test="typeId!='' and typeId!=null">
         type_id = #{typeId,jdbcType=INTEGER} and
       </if>
+      <if test="(state!='' and state!=null) or state==0">
+        g.state = #{state,jdbcType=INTEGER} and
+      </if>
     </trim>
-
   </select>
   <update id="updateState" parameterType="com.hqyj.pojo.Goods" >
   update goods

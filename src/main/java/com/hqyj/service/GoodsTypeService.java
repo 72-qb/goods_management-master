@@ -11,4 +11,12 @@ import java.util.HashMap;
  */
 public interface GoodsTypeService {
     HashMap<String,Object> selectAll(Goods_type goodsType);
+
+    int updateTypeSwitch(Goods_type goodsType);
+
+    int updateTypeSave(Goods_type goodsType);
+
+    int deleteType(int typeId);
+
+    int insertTypeSave(Goods_type goodsType);
 }

@@ -1,6 +1,6 @@
 package com.hqyj.pojo;
 
-public class Goods_type {
+public class Goods_type extends MyPage{
     private Integer typeId;
 
     private String name;

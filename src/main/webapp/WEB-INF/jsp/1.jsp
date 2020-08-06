@@ -1,32 +1,38 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
-         pageEncoding="utf-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
+<%--
+  Created by IntelliJ IDEA.
+  User: 文宏
+  Date: 2020/8/3
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html class="x-admin-sm">
-
 <head>
-    <meta charset="UTF-8">
-    <title>欢迎页面-X-admin2.2</title>
+    <title>库存</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/font.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/xadmin.css">
-    <script src="${pageContext.request.contextPath}/static/lib/layui/layui.js" charset="utf-8"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/xadmin.js"></script>
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/xadmin.css">
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/static/js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
-
-<body>
+<body onload="load(pageInfo)">
 <div class="x-nav">
-            <span class="layui-breadcrumb">
-                <a href="">首页</a>
-                <a href="">演示</a>
-                <a>
-                    <cite>导航元素</cite></a>
-            </span>
-    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
-        <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
-    </a>
+          <span class="layui-breadcrumb">
+            <a href="">首页</a>
+            <a href="">演示</a>
+            <a>
+              <cite>导航元素</cite></a>
+          </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       onclick="location.reload()" title="刷新">
+        <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
 </div>
 <div class="layui-fluid">
     <div class="layui-row layui-col-space15">
@@ -34,132 +40,60 @@
             <div class="layui-card">
                 <div class="layui-card-body ">
                     <form class="layui-form layui-col-space5">
-                        <div class="layui-input-inline layui-show-xs-block">
-                            <input class="layui-input" placeholder="开始日" name="start" id="start"></div>
-                        <div class="layui-input-inline layui-show-xs-block">
-                            <input class="layui-input" placeholder="截止日" name="end" id="end"></div>
-                        <div class="layui-input-inline layui-show-xs-block">
-                            <select name="contrller">
-                                <option>支付方式</option>
-                                <option>支付宝</option>
-                                <option>微信</option>
-                                <option>货到付款</option></select>
+                        <div class="layui-inline layui-show-xs-block">
+                            <input type="text" name="storeId" placeholder="请输入商品编号" autocomplete="off"
+                                   class="layui-input">
                         </div>
-                        <div class="layui-input-inline layui-show-xs-block">
-                            <select name="contrller">
-                                <option value="">订单状态</option>
-                                <option value="0">待确认</option>
-                                <option value="1">已确认</option>
-                                <option value="2">已收货</option>
-                                <option value="3">已取消</option>
-                                <option value="4">已完成</option>
-                                <option value="5">已作废</option></select>
+                        <div class="layui-inline layui-show-xs-block">
+                            <input type="text" name="storeName" placeholder="请输入商品名称" autocomplete="off"
+                                   class="layui-input">
                         </div>
-                        <div class="layui-input-inline layui-show-xs-block">
-                            <input type="text" name="username" placeholder="请输入订单号" autocomplete="off" class="layui-input"></div>
-                        <div class="layui-input-inline layui-show-xs-block">
-                            <button class="layui-btn" lay-submit="" lay-filter="sreach">
-                                <i class="layui-icon">&#xe615;</i></button>
+                        <div class="layui-inline layui-show-xs-block">
+                            <button class="layui-btn" lay-submit="" lay-filter="search"><i
+                                    class="layui-icon">&#xe615;</i></button>
                         </div>
                     </form>
                 </div>
                 <div class="layui-card-header">
-                    <button class="layui-btn layui-btn-danger" onclick="delAll()">
-                        <i class="layui-icon"></i>批量删除</button>
-                    <button class="layui-btn" onclick="xadmin.open('添加用户','./order-add.html',800,600)">
-                        <i class="layui-icon"></i>添加</button></div>
-                <div class="layui-card-body ">
+                    <button class="layui-btn layui-btn-danger" onclick="deleteStores()"><i class="layui-icon"></i>批量删除
+                    </button>
+                    <button class="layui-btn" onclick="xadmin.open('添加库存','/store/addStorePage.do',600,400)"><i
+                            class="layui-icon"></i>添加
+                    </button>
+                </div>
+
+                <div class="layui-card-body layui-table-body layui-table-main">
                     <table class="layui-table layui-form">
                         <thead>
                         <tr>
                             <th>
-                                <input type="checkbox" name="" lay-skin="primary">
+                                <input type="checkbox" lay-filter="checkAll" name="" lay-skin="primary">
                             </th>
-                            <th>订单编号</th>
-                            <th>收货人</th>
-                            <th>总金额</th>
-                            <th>应付金额</th>
-                            <th>订单状态</th>
-                            <th>支付状态</th>
-                            <th>发货状态</th>
-                            <th>支付方式</th>
-                            <th>配送方式</th>
-                            <th>下单时间</th>
-                            <th>操作</th></tr>
+                            <th>库存编号</th>
+                            <th>商品名称</th>
+                            <th>商品库存</th>
+                            <th>库存上限</th>
+                            <th>库存下限</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
                         </thead>
-                        <tbody>
-                        <tr>
-                            <td>
-                                <input type="checkbox" name="" lay-skin="primary"/></td>
-                            <td>2017009171822298053</td>
-                            <td>老王:18925139194</td>
-                            <td>7829.10</td>
-                            <td>7854.10</td>
-                            <td>待确认</td>
-                            <td>未支付</td>
-                            <td>未发货</td>
-                            <td>其他方式</td>
-                            <td>申通物流</td>
-                            <td>2017-08-17 18:22</td>
-                            <td class="td-manage">
-                                <a title="查看" onclick="xadmin.open('编辑','order-view.html')" href="javascript:;">
-                                    <i class="layui-icon">&#xe63c;</i></a>
-                                <a title="删除" onclick="member_del(this,'要删除的id')" href="javascript:;">
-                                    <i class="layui-icon">&#xe640;</i></a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="checkbox" name="" lay-skin="primary"></td>
-                            <td>2017009171822298053</td>
-                            <td>老王:18925139194</td>
-                            <td>7829.10</td>
-                            <td>7854.10</td>
-                            <td>待确认</td>
-                            <td>未支付</td>
-                            <td>未发货</td>
-                            <td>其他方式</td>
-                            <td>申通物流</td>
-                            <td>2017-08-17 18:22</td>
-                            <td class="td-manage">
-                                <a title="查看" onclick="xadmin.open('编辑','order-view.html')" href="javascript:;">
-                                    <i class="layui-icon">&#xe63c;</i></a>
-                                <a title="删除" onclick="member_del(this,'要删除的id')" href="javascript:;">
-                                    <i class="layui-icon">&#xe640;</i></a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="checkbox" name="" lay-skin="primary"></td>
-                            <td>2017009171822298053</td>
-                            <td>老王:18925139194</td>
-                            <td>7829.10</td>
-                            <td>7854.10</td>
-                            <td>待确认</td>
-                            <td>未支付</td>
-                            <td>未发货</td>
-                            <td>其他方式</td>
-                            <td>申通物流</td>
-                            <td>2017-08-17 18:22</td>
-                            <td class="td-manage">
-                                <a title="查看" onclick="xadmin.open('编辑','order-view.html')" href="javascript:;">
-                                    <i class="layui-icon">&#xe63c;</i></a>
-                                <a title="删除" onclick="member_del(this,'要删除的id')" href="javascript:;">
-                                    <i class="layui-icon">&#xe640;</i></a>
-                            </td>
-                        </tr>
+                        <tbody id="tbody">
+
                         </tbody>
                     </table>
                 </div>
                 <div class="layui-card-body ">
                     <div class="page">
-                        <div>
-                            <a class="prev" href="">&lt;&lt;</a>
-                            <a class="num" href="">1</a>
-                            <span class="current">2</span>
-                            <a class="num" href="">3</a>
-                            <a class="num" href="">489</a>
-                            <a class="next" href="">&gt;&gt;</a></div>
+
+                        <%--分页按钮--%>
+                        <div class="col offset-3">
+                            <a href="#" class="num" id="firstPage">首页</a>
+                            <a href="#" class="num" id="prePage">上一页</a>
+                            <div style="display: inline-block" id="pageBtns"></div>
+                            <a href="#" class="num" id="nextPage">下一页</a>
+                            <a href="#" class="num" id="endPage">尾页</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -167,79 +101,283 @@
     </div>
 </div>
 </body>
-<script>
-    layui.use(['laydate', 'form'],
-    function() {
+</html>
+<script type="text/javascript">
+
+    //页码信息
+    var page = 1;
+    var prePage;
+    var nextPage;
+    var firstPage;
+    var endPage;
+    var pageSize;
+
+    var storeId = '';
+    var storeName = '';
+    var pageInfo = {
+        page: page,
+        storeId: storeId,
+        storeName: storeName
+    }
+
+    layui.use(['laydate', 'form'], function () {
         var laydate = layui.laydate;
+        var form = layui.form;
 
-        //执行一个laydate实例
-        laydate.render({
-            elem: '#start' //指定元素
+        // 监听全选
+        form.on('checkbox(checkAll)', function (data) {
+
+            if (data.elem.checked) {
+                $("tbody input[type='checkbox']").prop('checked', true);
+            } else {
+                $("tbody input[type='checkbox']").prop('checked', false);
+            }
+            form.render('checkbox');
         });
 
-        //执行一个laydate实例
-        laydate.render({
-            elem: '#end' //指定元素
-        });
+        //监听查找
+        form.on('submit(search)',
+            function (data) {
+                console.log(data);
+                pageInfo.storeId = data.field.storeId;
+                pageInfo.storeName = data.field.storeName;
+                console.log(pageInfo);
+                //发异步，把数据提交给后台
+                load(pageInfo);
+                return false;
+            });
     });
 
-/*用户-停用*/
-function member_stop(obj, id) {
-    layer.confirm('确认要停用吗？',
-        function(index) {
+    layui.use(['form'], function () {
+        form = layui.form;
+    });
 
-            if ($(obj).attr('title') == '启用') {
+    function load(pageInfo) {
+        var da = eval('(' + parent.json + ')');
+        $.ajax({
+            url: "/store/storeList.ajax",
+            type: "get",
+            data: pageInfo,
+            dataType: "json",
+            success: function (data) {
+                var html = "";
+                var t1 = '';
+                var t2 = '';
+                var t3 = '';
+                var t4 = '';
+                for (var i = 0; i < data.list.length; i++) {
+                    if (data.list[i].state == '0') {
+                        t1 = '已启用';
+                        t2 = '停用';
+                        t3 = '&#xe601;';
+                        t4 = '';
+                    } else {
+                        t1 = '已停用';
+                        t2 = '启用';
+                        t3 = '&#xe62f;';
+                        t4 = 'layui-btn-disabled';
+                    }
+                    html += "<tr>\n" +
+                        "        <td>\n" +
+                        "            <input type='checkbox' name='storeIds' value='"+data.list[i].storeId+"' lay-skin='primary'> \n" +
+                        "        </td>"+
+                        "        <td>" + data.list[i].storeId + "</td>\n" +
+                        "        <td>" + data.list[i].storeName + "</td>\n" +
+                        "        <td>" + data.list[i].num + "</td>\n" +
+                        "        <td>" + data.list[i].uNum + "</td>\n" +
+                        "        <td>" + data.list[i].dNum + "</td>\n" +
+                        "        <td class='td-status'>\n" +
+                        "             <span class='layui-btn layui-btn-normal layui-btn-mini " + t4 + "'>" + t1 + "</span></td>\n" +
+                        "        <td class='td-manage'>\n" +
+                        "            <a onclick=member_stop(this,'10001') href='javascript:;' title=" + t2 + ">\n" +
+                        "               <i class='layui-icon'>" + t3 + "</i>\n" +
+                        "            </a>\n" +
+                        "            <a title='修改' onclick=updateStore(this)\n" +
+                        "               href='javascript:;'>\n" +
+                        "                <i class='layui-icon'>&#xe642;</i>\n" +
+                        "            </a>\n" +
+                        "            <a title='删除' onclick=deleteStore(this) href='javascript:;'>\n" +
+                        "                <i class='layui-icon'>&#xe640;</i>\n" +
+                        "            </a>" +
+                        "        </td>\n" +
+                        "    </tr>"
+                }
 
-                //发异步把用户状态进行更改
-                $(obj).attr('title', '停用');
-                $(obj).find('i').html('&#xe62f;');
+                $("#tbody").html(html);
+                form.render();
 
-                $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
-                layer.msg('已停用!', {
-                    icon: 5,
-                    time: 1000
-                });
+                page = data.nowPage;
+                prePage = data.prePage;
+                nextPage = data.nextPage;
+                firstPage = data.firstPage;
+                endPage = data.endPage;
+                pageSize = data.pageSize;
 
-            } else {
-                $(obj).attr('title', '启用');
-                $(obj).find('i').html('&#xe601;');
+                html = "";
+                for (i = 1; i <= endPage; i++) {
+                    html += "&nbsp;<a href='#' onclick=pageBtnClick(" + i + ") class='num' id='pageid" + i + "'>" + i + "</a>"
+                }
+                $("#pageBtns").html(html);
 
-                $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
-                layer.msg('已启用!', {
-                    icon: 5,
-                    time: 1000
-                });
+                $("[id=pageid" + page + "]").prop("style", "color: #0000FF");
             }
+        })
+    }
 
+    //首页
+    $("#firstPage").click(function () {
+        pageInfo.page = firstPage;
+        load(pageInfo);
+    });
+
+    //上一页
+    $("#prePage").click(function () {
+        pageInfo.page = prePage;
+        load(pageInfo);
+    });
+
+    //下一页
+    $("#nextPage").click(function () {
+        pageInfo.page = nextPage;
+        load(pageInfo);
+    });
+
+    //尾页
+    $("#endPage").click(function () {
+        pageInfo.page = endPage;
+        load(pageInfo);
+    });
+
+    //点击页码按钮
+    function pageBtnClick(pageid) {
+        pageInfo.page = pageid;
+        load(pageInfo);
+    }
+
+    var store;
+
+    function updateStore(btn) {
+        store = JSON.stringify({
+            storeId: $(btn).parent().parent().find("td").eq(1).text(),
+            storeName: $(btn).parent().parent().find("td").eq(2).text(),
+            num: $(btn).parent().parent().find("td").eq(3).text(),
+            uNum: $(btn).parent().parent().find("td").eq(4).text(),
+            dNum: $(btn).parent().parent().find("td").eq(5).text(),
+        })
+        xadmin.open('修改', '/store/updateStorePage.do', 600, 400);
+    }
+
+    function deleteStore(obj) {
+        layer.confirm("确定要删除<span class='x-red'>"+$(obj).parent().parent().find("td").eq(2).text()+"</span>吗？", function (index) {
+            $.ajax({
+                url: "/store/deleteStore.ajax",
+                type: "get",
+                data: {
+                    storeId: $(obj).parent().parent().find("td").eq(1).text()
+                },
+                dataType: "text",
+                success: function (data) {
+                    if (data == 'true') {
+                        layer.msg('删除成功', {icon: 6, time: 1000});
+                        load(pageInfo);
+                    } else {
+                        layer.msg('删除失败', {icon: 5, time: 1000});
+                        load(pageInfo);
+                    }
+                }
+
+            })
+        })
+    }
+
+    function deleteStores () {
+        var ids = [];
+
+        // 获取选中的id
+        $("tbody input[type='checkbox']").each(function(index, el) {
+            if($(this).prop('checked')){
+                ids.push($(this).val())
+            }
         });
-}
 
-/*用户-删除*/
-function member_del(obj, id) {
-    layer.confirm('确认要删除吗？',
-        function(index) {
-            //发异步删除数据
-            $(obj).parents("tr").remove();
-            layer.msg('已删除!', {
-                icon: 1,
-                time: 1000
-            });
-        });
-}
-
-function delAll(argument) {
-
-    var data = tableCheck.getData();
-
-    layer.confirm('确认要删除吗？' + data,
-        function(index) {
+        layer.confirm('确认要删除吗？'+ids.toString(),function(index){
             //捉到所有被选中的，发异步进行删除
-            layer.msg('删除成功', {
-                icon: 1
-            });
-            $(".layui-form-checked").not('.header').parents('tr').remove();
+            $.ajax({
+                url:"/store/deleteStores.ajax",
+                type:"get",
+                data:{
+                    storeIds:ids.toString()
+                },
+                dataType:"text",
+                success:function (data) {
+                    if (data == 'true'){
+                        layer.msg('删除成功', {icon: 1});
+                    }else {
+                        layer.msg('删除失败', {icon: 2});
+                    }
+                }
+
+            })
+            // $(".layui-form-checked").not('.header').parents('tr').remove();
         });
-}</script>
+    }
 
-</html>
+    /*库存-停用*/
+    function member_stop(obj, id) {
 
+
+        if ($(obj).attr('title') == '停用') {
+            layer.confirm('确认要停用吗？', function (index) {
+                //发异步把状态进行更改
+                $.ajax({
+                    url: "/store/updateStore.ajax",
+                    type: "get",
+                    data: {
+                        storeId: $(obj).parent().parent().find("td").eq(1).text(),
+                        state: -1
+                    },
+                    dataType: "text",
+                    success: function (data) {
+                        if (data == 'true') {
+                            $(obj).attr('title', '启用')
+                            $(obj).find('i').html('&#xe62f;');
+
+                            $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
+                            layer.msg('已停用!', {icon: 5, time: 1000});
+                            load(pageInfo);
+                        } else {
+                            layer.msg('失败', {icon: 5, time: 1000});
+                        }
+                    }
+
+                })
+            })
+        } else {
+            layer.confirm('确认要启用吗？', function (index) {
+                $.ajax({
+                    url: "/store/updateStore.ajax",
+                    type: "get",
+                    data: {
+                        storeId: $(obj).parent().parent().find("td").eq(1).text(),
+                        state: 0
+                    },
+                    dataType: "text",
+                    success: function (data) {
+                        if (data == 'true') {
+                            $(obj).attr('title', '停用')
+                            $(obj).find('i').html('&#xe601;');
+
+                            $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
+                            layer.msg('已启用!', {icon: 6, time: 1000});
+                            load(pageInfo);
+                        } else {
+                            layer.msg('失败', {icon: 5, time: 1000});
+                        }
+                    }
+
+                })
+            })
+        }
+
+    }
+</script>

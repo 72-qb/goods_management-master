@@ -97,7 +97,7 @@
                             <cite>生产商信息管理</cite></a>
                     </li>
                     <li>
-                        <a onclick="xadmin.add_tab('类型列表','${pageContext.request.contextPath}/lc/loginIndex.do')">
+                        <a onclick="xadmin.add_tab('类型列表','${pageContext.request.contextPath}/gc/goodsTypeListPage.do')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>商品类型管理</cite></a>
                     </li>

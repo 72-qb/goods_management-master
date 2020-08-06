@@ -30,37 +30,25 @@
   <insert id="insertSelective" parameterType="com.hqyj.pojo.Producer" >
     insert into producer
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="producerId != null" >
-        producer_id,
-      </if>
-      <if test="name != null" >
+      <if test="name != null and name!=''">
         name,
       </if>
-      <if test="address != null" >
+      <if test="address != null and address!=''" >
         address,
       </if>
-      <if test="tel != null" >
+      <if test="tel != null and tel!=''" >
         tel,
-      </if>
-      <if test="state != null" >
-        state,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="producerId != null" >
-        #{producerId,jdbcType=INTEGER},
-      </if>
-      <if test="name != null" >
+      <if test="name != null and name!=''" >
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="address != null" >
+      <if test="address != null and address!=''" >
         #{address,jdbcType=VARCHAR},
       </if>
-      <if test="tel != null" >
+      <if test="tel != null and tel!=''" >
         #{tel,jdbcType=VARCHAR},
-      </if>
-      <if test="state != null" >
-        #{state,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -103,5 +91,24 @@
       </if>
     </trim>
   </select>
-
+  <update id="updateProState" parameterType="com.hqyj.pojo.Producer" >
+  update producer
+  set state = #{state,jdbcType=INTEGER}
+  where producer_id = #{producerId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateProSave" parameterType="com.hqyj.pojo.Producer" >
+  update producer
+  <set >
+    <if test="name != null and name != ''" >
+      name = #{name,jdbcType=VARCHAR},
+    </if>
+    <if test="address != null and address != ''" >
+      address = #{address,jdbcType=VARCHAR},
+    </if>
+    <if test="tel != null and tel != ''" >
+      tel = #{tel,jdbcType=VARCHAR},
+    </if>
+  </set>
+  where producer_id = #{producerId,jdbcType=VARCHAR}
+  </update>
 </mapper>

@@ -33,6 +33,27 @@ public class ProducerServiceImpl implements ProducerService {
         map.put("indexPage",pageInfo.getNavigateFirstPage());
         map.put("endPage",pageInfo.getNavigateLastPage());
         map.put("nowPage",pageInfo.getPageNum());
+        map.put("size",pageInfo.getSize());
         return map;
+    }
+
+    @Override
+    public int updateProState(Producer producer) {
+        return pm.updateProState(producer);
+    }
+
+    @Override
+    public int updateProSave(Producer producer) {
+        return pm.updateProSave(producer);
+    }
+
+    @Override
+    public int deletePro(int producerId) {
+        return pm.deleteByPrimaryKey(producerId);
+    }
+
+    @Override
+    public int insertProSave(Producer producer) {
+        return pm.insertSelective(producer);
     }
 }
